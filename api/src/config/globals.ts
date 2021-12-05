@@ -2,7 +2,7 @@ import PersistentConfiguration from "./persitent";
 import Rights from "./rights";
 
 export default class Globals {
-  static port = 31337;
+  static port = process.env.PORT || 31337;
   static version = "v1.0.0";
   static appName = "ctfnote-api";
 
@@ -34,7 +34,7 @@ export default class Globals {
     Globals.mdShowUrl = await PersistentConfiguration.setIfNotSet("md-show-url", Globals.mdShowUrl);
     Globals.allowRegistration = await PersistentConfiguration.setIfNotSet(
       "allow-registration",
-      Globals.allowRegistration,
+      Globals.allowRegistration
     );
   }
 }

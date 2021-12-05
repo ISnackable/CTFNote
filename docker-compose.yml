@@ -6,9 +6,9 @@ services:
     networks:
       - ctfnote
     environment:
-      MD_CREATE_URL: "http://front/pad/new"
+      MD_CREATE_URL: "http://front/pad/new" # change me
       MD_SHOW_URL: "/"
-      DB_URL: "postgres://ctfnote:ctfnote@db:5432/ctfnote"
+      DB_URL: "postgres://ctfnote:ctfnote@db:5432/ctfnote" # change me
     depends_on:
       - db
   db:
@@ -26,9 +26,9 @@ services:
       - ctfnote
     build:
       context: "./front"
-      args:
-        API_HOST: api
-        PAD_HOST: codimd
+      # args:
+      #   API_HOST: api
+      #   PAD_HOST: codimd
     depends_on:
       - api
       - codimd
@@ -37,7 +37,7 @@ services:
   codimd:
     image: quay.io/hedgedoc/hedgedoc:1.7.2-alpine
     environment:
-      - CMD_DB_URL=postgres://ctfnote:ctfnote@db:5432/ctfnote
+      - CMD_DB_URL=postgres://ctfnote:ctfnote@db:5432/ctfnote # use heroku deploy instance
       - CMD_URL_PATH=pad
       - CMD_IMAGE_UPLOAD_TYPE=imgur
     depends_on:

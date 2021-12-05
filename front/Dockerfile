@@ -25,5 +25,4 @@ ARG PAD_HOST
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN sed -i "s/{{API\_HOST}}/${API_HOST}/g"  /etc/nginx/conf.d/default.conf 
-RUN sed -i "s/{{PAD\_HOST}}/${PAD_HOST}/g"  /etc/nginx/conf.d/default.conf 
+CMD /bin/sh -c "envsubst '\$PORT \$HEROKU_APP_PAD_URL \$HEROKU_APP_BACKEND_URL' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon off;'
