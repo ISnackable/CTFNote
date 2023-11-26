@@ -19,4 +19,11 @@ RUN mkdir -p /logs
 
 COPY --from=build-deps /usr/src/app/dist/spa /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf.template
+
+# Nice logging in render.com/docker
+RUN ln -sf /dev/stdout /logs/access.log && ln -sf /dev/stderr /logs/error.log
+
+CMD /bin/sh -c "echo 'RENDER_APP_PAD_URL: $RENDER_APP_PAD_URL, RENDER_APP_BACKEND_URL: $RENDER_APP_BACKEND_URL' && envsubst '\$RENDER_APP_PAD_URL \$RENDER_APP_BACKEND_URL' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
