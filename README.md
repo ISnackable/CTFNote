@@ -10,6 +10,18 @@ CTFNote is a collaborative tool aiming to help CTF teams to organise their work.
 
 ## Installation
 
+### One-click Installer
+
+#### Render.com
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ISnackable/CTFNote/tree/render.com)
+
+To have more control of the databases and the apps, adjust the `render.yaml` file to your preference value. For example. you could change the `region` value to a closer region of where you live.
+
+**REMINDER: As `render.yaml` does not support variable interpolation, you have to manually append the "/new" to the `PAD_CREATE_URL` enviroment variable on the site after the "api" web service has been deployed.**
+
+---
+
 Before starting, make sure to fill in the information in the `.env` file.
 
 ### Pre-build images
