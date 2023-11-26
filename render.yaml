@@ -1,0 +1,119 @@
+services:
+  # API
+  - type: pserv
+    name: api
+    runtime: docker
+    region: singapore # optional (defaults to oregon)
+    plan: free # optional (defaults to starter instance type)
+    rootDir: api
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    numInstances: 1
+    envVars:
+      - key: PAD_CREATE_URL
+        fromService:
+          name: hedgedoc
+          type: pserv
+          property: hostport # have to manually prepend "http://"" and append "/new" to the end after creation
+      - key: PAD_SHOW_URL
+        value: /
+      - key: DB_DATABASE
+        fromDatabase:
+          name: ctfnote
+          property: database
+      - key: DB_ADMIN_LOGIN
+        fromDatabase:
+          name: ctfnote
+          property: user
+      - key: DB_ADMIN_PASSWORD
+        fromDatabase:
+          name: ctfnote
+          property: password
+      - key: DB_USER_LOGIN
+        value: user_postgraphile
+      - key: DB_USER_PASSWORD
+        value: secret_password
+      - key: DB_HOST
+        fromDatabase:
+          name: ctfnote
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ctfnote
+          property: port
+      - key: WEB_PORT
+        value: 3000
+      - key: PGSSLMODE
+        value: no-verify
+
+  # Frontend
+  - type: web
+    name: front
+    runtime: docker
+    plan: free # optional (defaults to starter instance type)
+    region: singapore # optional (defaults to oregon)
+    rootDir: front
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    envVars:
+      - key: RENDER_APP_PAD_HOSTPORT
+        fromService:
+          name: hedgedoc
+          type: pserv
+          property: hostport
+      - key: RENDER_APP_BACKEND_HOSTPORT
+        fromService:
+          name: api
+          type: pserv
+          property: hostport
+      - key: NODE_ENV
+        value: production
+
+  # HedgeDoc
+  - type: pserv
+    name: hedgedoc
+    runtime: image
+    plan: free # optional (defaults to starter instance type)
+    region: singapore # optional (defaults to oregon)
+    image:
+      url: quay.io/hedgedoc/hedgedoc:1.9.9
+    envVars:
+      - key: CMD_DB_URL
+        fromDatabase:
+          name: hedgedoc
+          property: connectionString
+      - key: CMD_URL_PATH
+        value: pad
+      - key: CMD_DOMAIN
+        fromService:
+          name: front
+          type: web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+      - key: PGSSLMODE
+        value: no-verify
+      - key: CMD_PROTOCOL_USESSL
+        value: true
+      - key: CMD_CSP_ENABLE
+        value: true
+      - key: CMD_IMAGE_UPLOAD_TYPE
+        value: imgur
+      - key: CMD_SESSION_SECRET
+        generateValue: true
+
+databases:
+  - name: ctfnote
+    plan: free # optional (defaults to starter instance type)
+    region: singapore # optional (defaults to oregon)
+    databaseName: ctfnote
+    user: ctfnote
+    ipAllowList: [] # only allow internal connections
+    postgresMajorVersion: 15
+
+  # Hedgedoc now uses its own database
+  - name: hedgedoc
+    plan: free # optional (defaults to starter instance type)
+    region: singapore # optional (defaults to oregon)
+    databaseName: hedgedoc
+    user: ctfnote
+    ipAllowList: [] # only allow internal connections
+    postgresMajorVersion: 15
