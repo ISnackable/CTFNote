@@ -14,7 +14,7 @@ services:
         fromService:
           type: web
           name: hedgedoc
-          envVarKey: RENDER_EXTERNAL_URL # have to manually append /new to the end after creation
+          envVarKey: RENDER_EXTERNAL_URL # have to manually append /new to the end after creation and redeploy
       - key: PAD_SHOW_URL
         value: /
       - key: DB_DATABASE
@@ -45,6 +45,36 @@ services:
         value: 3000
       - key: PGSSLMODE
         value: no-verify
+      - key: CMD_DOMAIN
+        fromService:
+          type: web
+          name: front
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+      - key: CMD_PROTOCOL_USESSL
+        value: true
+      - key: CMD_DOCUMENT_MAX_LENGTH
+        value: 100000
+      - key: USE_DISCORD
+        sync: false
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      - key: DISCORD_SERVER_ID
+        sync: false
+      - key: DISCORD_VOICE_CHANNELS
+        value: -3
+      - key: DISCORD_REGISTRATION_ENABLED
+        value: false
+      - key: DISCORD_REGISTRATION_CTFNOTE_ROLE
+        value: ''
+      - key: DISCORD_REGISTRATION_ROLE_ID
+        value: ''
+      - key: TZ
+        value: UTC
+      - key: LC_ALL
+        value: en_US.UTF-8
+      - key: SESSION_SECRET
+        generateValue: true
+    # preDeployCommand: export PAD_CREATE_URL="${RENDER_EXTERNAL_URL}/new" # Only paid instances
 
   # Frontend
   - type: web
@@ -97,6 +127,8 @@ services:
         value: true
       - key: CMD_IMAGE_UPLOAD_TYPE
         value: imgur
+      - key: CMD_DOCUMENT_MAX_LENGTH
+        value: 100000
       - key: CMD_SESSION_SECRET
         generateValue: true
 
