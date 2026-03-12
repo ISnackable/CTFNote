@@ -133,8 +133,10 @@ services:
         value: 100000
       - key: CMD_SESSION_SECRET
         generateValue: true
-      - keys: CMD_RATE_LIMIT_NEW_NOTES
+      - key: CMD_RATE_LIMIT_NEW_NOTES
         value: 0
+      - key: NODE_OPTIONS # free users only have 512MB of RAM
+        value: "--max-old-space-size=350"
 
 databases:
   - name: ctfnote
@@ -153,6 +155,4 @@ databases:
     user: ctfnote
     ipAllowList: [] # only allow internal connections
     postgresMajorVersion: 15
-    envVars:
-      - key: NODE_OPTIONS # free users only have 512MB of RAM
-        value: "--max-old-space-size=350"
+   
